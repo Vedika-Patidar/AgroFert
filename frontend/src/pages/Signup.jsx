@@ -20,7 +20,6 @@ const Signup = () => {
   };
 
   const validatePassword = (password) => {
-    // Minimum 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
     const regex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return regex.test(password);
@@ -42,6 +41,21 @@ const Signup = () => {
       return;
     }
 
+    // Save user data to localStorage
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const userExists = users.find((user) => user.email === formData.email);
+    if (userExists) {
+      toast.error("Email already exists!", { position: "bottom-center" });
+      return;
+    }
+
+    users.push({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+    });
+    localStorage.setItem("users", JSON.stringify(users));
+
     toast.success("Signup successful!", {
       duration: 2000,
       position: "bottom-center",
@@ -53,10 +67,7 @@ const Signup = () => {
     <div className="flex justify-center bg-green-50 py-12 px-4 md:px-8">
       <Toaster />
       <div className="flex flex-col md:flex-row bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden w-full max-w-4xl">
-        {/* Left Image */}
         <div className="md:w-1/2 hidden md:block bg-[url('https://images.pexels.com/photos/2132250/pexels-photo-2132250.jpeg')] bg-cover bg-center"></div>
-
-        {/* Right Form */}
         <div className="md:w-1/2 p-10 md:p-14 flex flex-col justify-center">
           <h2 className="text-3xl md:text-4xl font-bold text-green-700 mb-4 text-center md:text-left">
             Create Account
@@ -85,8 +96,6 @@ const Signup = () => {
               className="w-full px-4 py-3 rounded-xl border border-green-200 focus:ring-2 focus:ring-green-400 focus:outline-none shadow-sm backdrop-blur-sm"
               required
             />
-
-            {/* Password Field */}
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -105,8 +114,6 @@ const Signup = () => {
                 {showPassword ? <HiOutlineEyeOff /> : <HiOutlineEye />}
               </button>
             </div>
-
-            {/* Confirm Password Field */}
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}

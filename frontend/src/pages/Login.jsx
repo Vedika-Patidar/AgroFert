@@ -4,12 +4,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,15 +14,24 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Simple validation
     if (!formData.email || !formData.password) {
       toast.error("Please fill in all fields", { position: "bottom-center" });
       return;
     }
 
-    // Here you would normally call your backend API to verify credentials
-    // For demonstration, we assume login is successful
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find(
+      (u) => u.email === formData.email && u.password === formData.password
+    );
+
+    if (!user) {
+      toast.error("Invalid email or password", { position: "bottom-center" });
+      return;
+    }
+
+    // Save logged in user info to localStorage (optional)
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
+
     toast.success("Login successful!", {
       duration: 2000,
       position: "bottom-center",
@@ -38,10 +43,7 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-green-50 px-4 md:px-8">
       <Toaster />
       <div className="flex flex-col md:flex-row bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden w-full max-w-4xl">
-        {/* Left Image */}
         <div className="md:w-1/2 hidden md:block bg-[url('https://cdn.pixabay.com/photo/2024/10/12/03/15/women-9114238_640.jpg')] bg-cover bg-center"></div>
-
-        {/* Right Form */}
         <div className="md:w-1/2 p-10 md:p-14 flex flex-col justify-center">
           <h2 className="text-3xl md:text-4xl font-bold text-green-700 mb-4 text-center md:text-left">
             Welcome Back
@@ -61,7 +63,6 @@ const Login = () => {
               required
             />
 
-            {/* Password Field */}
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
