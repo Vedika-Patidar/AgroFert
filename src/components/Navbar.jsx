@@ -19,7 +19,7 @@ const Navbar = () => {
   const profileRef = useRef(null);
 
   const handleLogout = () => {
-    navigate("/home");
+    navigate("/");
   };
 
   // Handle search submission
